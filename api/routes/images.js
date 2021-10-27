@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/', (req, res) =>{
     res.status(200).json({
-        message: "I am in movies.get router"
+        message: "I am in images router"
     })
 })
 

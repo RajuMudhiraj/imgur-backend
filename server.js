@@ -14,11 +14,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // home route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to IMDB backend api." });
+  res.json({ message: "Welcome to Imgur backend api." });
 });
 
-const moviesRoutes = require('./api/routes/movies');
-app.use('/movies', moviesRoutes);
+const imagesRoutes = require('./api/routes/images');
+app.use('/images', imagesRoutes);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
