@@ -3,40 +3,75 @@
 require('dotenv').config();
 const express = require("express");
 const app = express();
+const bodyParser = require('body-parser')
+const morgan = require('morgan')
+
+
 
 // Connecting to mongodb atlas
 const mongoose = require('mongoose')
 try{
   
-  const mongoAtlasUri = "mongodb+srv://"+"process.env.MONGO_ATLAS_USER"+":"+"process.env.MONGO_ATLAS_USER"+"@cluster0.anqmb.mongodb.net/imgurbackend?retryWrites=true&w=majority";
+  const mongoAtlasUri = "mongodb+srv://"+process.env.MONGO_ATLAS_USER+":"+process.env.MONGO_ATLAS_PWD+"@cluster0.anqmb.mongodb.net/imgur?retryWrites=true&w=majority";
   mongoose.connect(mongoAtlasUri, { useNewUrlParser: true, useUnifiedTopology: true }, () => console.log('Connected to mongodb atlas'));
 }
 catch(err){
-console.log('could\'t connect to database')
+console.log('couldn\'t connect to database')
 }
 
 
-// parse requests of content-type - application/json
-app.use(express.json());
 
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(morgan('dev'))
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, x-Requested-With, Content-Type, Accept, Authorization')
+  if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+      return res.status(200).json({})
+  }
+  next()
+})
+
 
 // home route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Imgur backend api." });
 });
 
-const imagesRoutes = require('./api/routes/images');
-app.use('/images', imagesRoutes);
+const imagesRouter = require('./api/routes/images');
+app.use('/images', imagesRouter);
+
+
+// Creating an error and passing through next() if requested router not found
+app.use((req, res, next) => {
+  const error = new Error('Not found');
+  error.status = 404;
+  next(error);
+})
+
+// Sending error message to client
+app.use((error, req, res, next) => {
+  console.log(error)
+  res.status(error.status || 500);
+  res.json({
+      error: {
+          message: error.message
+      }
+  })
+});
 
 
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
+
 app.listen(PORT, (err) => {
   if(err){
     console.log("Error while running server")
   }
   console.log(`Server is running on port ${PORT}.`);
 });
+
 
