@@ -44,6 +44,8 @@ app.get("/", (req, res) => {
 const imagesRouter = require('./api/routes/images');
 app.use('/images', imagesRouter);
 
+const usersRouter = require('./api/routes/users');
+app.use('/users', usersRouter);
 
 // Creating an error and passing through next() if requested router not found
 app.use((req, res, next) => {
