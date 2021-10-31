@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
         console.log(docs)
         res.status(200).json({
             count: docs.length,
-            orders: docs.map(doc => {
+            likes: docs.map(doc => {
                 return {
                     _id:doc._id,
                     image: doc.imageId
@@ -38,5 +38,22 @@ router.post('/', (req, res) => {
         error:err
     })
 })
+
+router.delete('/', (req, res) => {
+    const id = req.body.likeId
+    Like.remove({_id:id})
+    .exec()
+    .then(result => {
+        res.status(200).json({
+            message: "Like deleted"
+        })
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });    
+} )
 
 module.exports = router;

@@ -15,7 +15,8 @@ router.get('/', (req, res) => {
                 return {
                     email: doc.email,
                     password: doc.password,
-                    _id: doc._id
+                    _id: doc._id,
+                    name:doc.name
                 }
             })
         }
@@ -29,19 +30,58 @@ router.get('/', (req, res) => {
 });
 
 
-// Handling POST request to /users
-router.post('/', (req, res) => {
-    const user = new User({
-        email: req.body.email,
-        password: req.body.password
-    })
-    user
-        .save()
-        .then( response => {
-            res.status(201).json({
-                message:'user created successfully!' 
+// Handling POST request to /users/signUp
+router.post('/signUp', (req, res) => {
+    User.find({email:req.body.email})
+    .exec()
+    .then(doc => {
+        if (doc.length <= 0){
+            const user = new User({
+                email: req.body.email,
+                password: req.body.password,
+                name : req.body.name
             })
-        })
+            user
+                .save()
+                .then( response => {
+                    res.status(201).json({
+                        message:'user created successfully!' 
+                    })
+                })
+        }
+        else {
+            res.status(200).json({
+                message:"User exists"
+            })
+        }
+    })
+    
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
+
+});
+
+
+// Handling POST request to /users/signIn
+router.post('/signIn', (req, res) => {
+    User.find({email:req.body.email})
+    .exec()
+    .then(doc => {
+        if (req.body.password == doc[0].password){
+            res.status(200).json({
+                password:doc[0].password
+            })
+        }
+        else{
+            res.status(400).json({
+                message: 'Authentication failed'
+            })
+        }
+    })
+    
         .catch(err => {
             res.status(500).json({
                 error: err
