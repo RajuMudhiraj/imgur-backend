@@ -41,11 +41,17 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Imgur backend api." });
 });
 
+// Images route
 const imagesRouter = require('./api/routes/images');
 app.use('/images', imagesRouter);
 
+// Users route
 const usersRouter = require('./api/routes/users');
 app.use('/users', usersRouter);
+
+// Likes route
+const likesRouter = require('./api/routes/likes');
+app.use('/likes', likesRouter);
 
 // Creating an error and passing through next() if requested router not found
 app.use((req, res, next) => {
