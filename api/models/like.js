@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 
 const likeSchema = mongoose.Schema({
-    imageId: {type:mongoose.Schema.Types.ObjectId, ref:'Image', required: true},
-    userId: {type:String, required:true}    
-    
+    imageId: {type:mongoose.Schema.Types.ObjectId, ref:'Image', required: true}    
 });
 
 module.exports = mongoose.model('Like', likeSchema)

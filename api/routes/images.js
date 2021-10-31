@@ -10,13 +10,16 @@ router.get('/', (req, res) => {
         .select('name sourceLink _id')
         .exec()
         .then(docs => {
+            console.log(docs)
             const response = {
                 count: docs.length,
                 images: docs.map(doc => {
                     return {
                         name: doc.name,
                         sourceLink: doc.sourceLink,
+                        likes:doc.likes,
                         _id: doc._id
+
                     }
                 })
             };
