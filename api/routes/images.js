@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const checkAuth = require('../middleware/check-auth')
 
 
 // Handling GET request to /images
@@ -60,12 +61,13 @@ router.get('/:imageId', (req, res) => {
 })
 
 // Handling POST request to /images
-router.post('/', (req, res) => {
+router.post('/', checkAuth, (req, res) => {
+
+
     const image = new Image({
         name: req.body.name,
         sourceLink: req.body.sourceLink
     })
-    console.log(image)
     image
         .save()
         .then(result => {
@@ -91,7 +93,7 @@ router.post('/', (req, res) => {
 
 
 // Handling PATCH request to /images
-router.patch('/:imageId', (req, res) => {
+router.patch('/:imageId', checkAuth,(req, res) => {
     const id = req.params.imageId;
     const updateOps = {};
     for (const ops of req.body) {
@@ -115,7 +117,7 @@ router.patch('/:imageId', (req, res) => {
 })
 
 // Handling DELETE request to /images
-router.delete('/:imageId', (req, res, next) => {
+router.delete('/:imageId', checkAuth, (req, res, next) => {
     const id = req.params.imageId;
     Image.deleteOne({ _id: id })
         .exec()

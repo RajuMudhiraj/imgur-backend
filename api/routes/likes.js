@@ -1,15 +1,18 @@
 const express = require('express')
 const router = express.Router();
+const checkAuth = require('../middleware/check-auth')
+
+
 
 const Like = require('../models/like')
 // Handling POST requests to /likes route
 
-router.get('/', (req, res) => {
+router.get('/', checkAuth, (req, res) => {
+    console.log(req.userData)
     Like.find()
     .populate('imageId', '_id name sourceLink')
     .exec()
     .then(docs => {
-        console.log(docs)
         res.status(200).json({
             count: docs.length,
             likes: docs.map(doc => {
@@ -24,7 +27,7 @@ router.get('/', (req, res) => {
     })
 })
 
-router.post('/', (req, res) => {
+router.post('/', checkAuth, (req, res) => {
     const like  = new Like({
         imageId:req.body.imageId,
     })
@@ -39,7 +42,7 @@ router.post('/', (req, res) => {
     })
 })
 
-router.delete('/', (req, res) => {
+router.delete('/', checkAuth, (req, res) => {
     const id = req.body.likeId
     Like.remove({_id:id})
     .exec()
